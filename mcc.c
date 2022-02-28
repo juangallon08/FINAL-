@@ -67,6 +67,76 @@ void OSCILLATOR_Initialize(void)
     // INTSRC enabled; PLLEN disabled; TUN 0; 
     OSCTUNE = 0x80;
 }
+#define uint16_t unsigned int
+#define uint32_t unsigned int 
+typedef enum {
+     byteint,
+     length,
+     data,
+     chek,
+     oro,
+     plata,        
+         
+ }Estados_t;
+uint16_t len;
+int count = 0;
+int i = 0; 
+int buffer[];
+int pp=0;
+uint32_t datos;
+char bu[20];
+char dato[4];
+
+//funcion para la trama 
+void leer_trama(float byte){
+    
+     byte= EUSART2_Read();
+     //EUSART1_Write(byte);
+     EUSART1_Puts("\r\n");
+      sprintf(bu,"%d",(int)byte);
+      EUSART1_Puts(bu); 
+     static Estados_t Estado = byteint;
+     switch (Estado){
+         case byteint: 
+              if(byte==0X7E){
+              PORTBbits.RB1 = 1;
+              EUSART2_Puts("\r\n estado byteint\r\n");
+             // EUSART1_Puts("\r\n");
+              // sprintf(bu,"%d",(int)byte);
+             // EUSART1_Puts(bu);
+             __delay_ms(500);
+              Estado = length; 
+              }
+              break;
+         case length:
+              len =(int)byte; 
+              // EUSART1_Puts("\r\n");
+            //  sprintf(bu,"%d",(int)len);
+             // EUSART1_Puts(bu);
+              pp=1;
+               Estado =data;
+               break;
+        case data:     
+            if(i<len){
+                buffer[i]=(int)byte;
+                //EUSART1_Puts("\r\n");
+              // sprintf(bu,"%d",(int)buffer[i]);
+              // EUSART1_Puts(bu); 
+               i+=1;
+            }      
+              break; 
+     
+        
+            
+     }
+           
+              
+             
+   
+        
+     
+
+}
 
 
 
